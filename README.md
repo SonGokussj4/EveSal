@@ -30,9 +30,9 @@ https://coder.haus/2019/09/27/installing-pdftotext-through-pip-on-windows-10/
 ## Installation
 ```
 git clone <this repo>
-python3 -m venv env
-source env/bin/activate
-python install -r requirements
+python3 -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
 ```
 
 ## Usage

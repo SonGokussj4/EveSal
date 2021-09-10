@@ -57,6 +57,7 @@ def strip_accents(s):
 def get_pdf_files(directory: Path) -> list:
     """Return list of all 'VypListek*.pdf' files in entered directory."""
     files = []
+    directory = Path(directory)
     for item in directory.iterdir():
         if not item.is_file():
             continue
@@ -103,6 +104,10 @@ def process_pdfs(pdf_files: list, write_txt: bool=False) -> dict:
         txt_filename = f'{file.stem}_res.txt'
         # print("DEBUG: txt_filename:", txt_filename)
         dc[txt_filename] = converted_lines
+
+        # Remove DOVOLENA
+        converted_lines = [line for line in converted_lines if "DOVOLENA" not in line]
+        print(f'converted_lines: {converted_lines}')
 
         if write_txt:
             txt_fullpath = file.parent / txt_filename
@@ -159,8 +164,8 @@ def plot_results(dc: dict=None, from_pickle: str="") -> None:
     add_bar(fig, dc['Bezhotovostne'], 'Bezhotovostně', subval=True, idx=1)
     add_bar(fig, dc['Vykonnostni odmeny'], 'Výkonnostní odměny')
     add_bar(fig, dc['Mes.premie z fondu'], 'Měs prémie z fondu')
-    add_bar(fig, dc['PRUMER (dov.)'], 'Dovolená - Průměr')
-    add_bar(fig, dc['DOVOLENA-zust.'], 'Dovolená - Zůstatek')
+    # add_bar(fig, dc['PRUMER (dov.)'], 'Dovolená - Průměr')
+    # add_bar(fig, dc['DOVOLENA-zust.'], 'Dovolená - Zůstatek')
     add_bar(fig, dc['Stravne s prispevkem'], 'Stravné')
     add_bar(fig, dc['Kompenzace kapit.poj'], 'Kompenace kapit.poj', subval=True, idx=1)
 
@@ -222,7 +227,7 @@ def main():
         return 1
 
     elif sys.argv[1] == '--convert':
-        pdf_files = get_pdf_files(curdir)
+        pdf_files = get_pdf_files(sys.argv[2])
         process_pdfs(pdf_files, write_txt=True)
 
     elif sys.argv[1] == '--plot':
